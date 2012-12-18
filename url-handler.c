@@ -1,5 +1,5 @@
 /*
- * ssh-to-putty
+ * url-handler
  *
  * Originally from
  * http://blog.dest-unreach.be/2009/07/11/putty-as-ssh-url-handler
