@@ -1,5 +1,7 @@
 PATH=$PATH:/home/john/ssh_to_putty
 
+export TEST_BINARY=./url-handler
+
 for TEST in \
     0_noargs \
     1_just_protocol \
