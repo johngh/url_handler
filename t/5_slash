@@ -1,1 +1,1 @@
-./ssh-to-putty ssh://hostname.net/
+$TEST_BINARY ssh://hostname.net/
