@@ -1,0 +1,5 @@
+#!/bin/bash
+
+MY_NAME=$(basename $0)
+echo "You ran: $MY_NAME $@"
+
