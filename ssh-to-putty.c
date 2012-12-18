@@ -1,16 +1,24 @@
+/*
+ * Originally from
+ * http://blog.dest-unreach.be/2009/07/11/putty-as-ssh-url-handler 
+ *
+ * With some modification by johngh
+ *
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-void usage(void) {
-	fprintf(stderr, "Usage: TODO\n");
+void usage(char* myname) {
+  fprintf(stderr, "Usage: %s ssh://[USER@]HOST[:PORT]\n");
 }
 
 char* get_putty_cmd(char* userinfo, char* c_params,
                     char* host, char* port) {
 	char* cmd = malloc(32768);
 
-	cmd = "putty.exe -ssh ";
+	cmd = "\"C:\\Program Files\\PuTTY\\putty.exe\" -ssh ";
 	
 	if(port) {
 		strncat(cmd, "-P ", 3);
@@ -50,7 +58,7 @@ int main(int argc, char* argv[]) {
 	char* cmd;
 
 	if( argc != 2 ) {
-		usage();
+		usage(argv[1]);
 		return 1;
 	}
 
