@@ -1,11 +1,11 @@
 all: clean binary test
 
 binary:
-	gcc -o ssh-to-putty ssh-to-putty.c
+	gcc -o url-handler url-handler.c
 
 test:
 	t/all
 
 clean:
-	@rm ssh-to-putty
+	@rm url-handler
 
