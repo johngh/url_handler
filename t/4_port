@@ -1,1 +1,1 @@
-./ssh-to-putty ssh://john@a32.net:22
+./ssh-to-putty ssh://john@hostname.net:22
