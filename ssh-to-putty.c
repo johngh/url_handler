@@ -41,21 +41,39 @@ int main(int argc, char* argv[]) {
 
     // char *putty_cmd = "\"C:\\Program Files\\PuTTY\\putty.exe\"";
     char *putty_cmd = "\"putty.exe\"";
+    char *rdp_cmd = "\"mstsc.exe\"";
 
     char cmd[2048];
 
     if( argc != 2 ) {
-        usage(my_name);
 
+        usage(my_name);
         return 2;
+
     }
 
     url_p = argv[1];
 
-    if( strncmp(url_p, "ssh://", 6) ) {
-        fprintf(stderr, "%s: '%s' is not a valid ssh:// URL\n", my_name, url_p);
+    int not_ssh = strncmp(url_p, "ssh://", 6);
+    int not_rdp = strncmp(url_p, "rdp://", 6);
+    int is_ssh, is_rdp;
+
+    if( not_ssh && not_rdp ) {
+
+        fprintf(stderr, "%s: '%s' is not a valid ssh:// or rdp:// URL\n", my_name, url_p);
         return 2;
-    } else if ( strlen(url_p) < 7 ) {
+
+    } else if ( not_rdp ) {
+
+        is_ssh = 1;
+
+    } else if ( not_ssh ) {
+
+        is_rdp = 1;
+
+    }
+
+    if ( strlen(url_p) < 7 ) {
         usage(my_name);
         fprintf(stderr, "  (You must give a hostname. I only saw '%s')\n", url_p);
         return 2;
@@ -98,18 +116,31 @@ int main(int argc, char* argv[]) {
         port = t1+1;
     }
 
-    strcpy(cmd, putty_cmd);
-    strncat(cmd, " -ssh ", 6);
+    if ( is_ssh ) {
 
-    if(port) {
-        strncat(cmd, "-P ", 3);
-        strncat(cmd, port, strlen(port) );
-        strncat(cmd, " ", 1);
-    }
+        strcpy(cmd, putty_cmd);
+        strncat(cmd, " -ssh ", 6);
 
-    if(login_p) {
-        strncat(cmd, login_p, strlen(login_p) );
-        strncat(cmd, "@", 1);
+        if(port) {
+            strncat(cmd, "-P ", 3);
+            strncat(cmd, port, strlen(port) );
+            strncat(cmd, " ", 1);
+        }
+
+        if(login_p) {
+            strncat(cmd, login_p, strlen(login_p) );
+            strncat(cmd, "@", 1);
+        }
+
+    } else if ( is_rdp ) {
+
+        strcpy(cmd, rdp_cmd);
+        strncat(cmd, " /v ", 4);
+
+    } else {
+
+        fprintf(stderr, "You are not following the protocol... ***sigh***\n");
+
     }
 
     if(host) {
