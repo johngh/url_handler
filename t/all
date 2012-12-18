@@ -1,0 +1,9 @@
+PATH=$PATH:/home/john/ssh_to_putty
+
+for TEST in 0_noargs 1_just_protocol 2_host 3_user_host 4_port 5_slash 6_slashes 9_invalid
+do
+    echo "TEST: $TEST"
+    cat t/$TEST
+    t/$TEST
+done
+
