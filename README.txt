@@ -2,7 +2,7 @@ Launch PuTTY with a ssh:// URL from a web page by registering this program as th
 
 You can do this with:
 
-ftype ssh="C:\bin\ssh-to-putty.exe" "%%1"
+ftype ssh="C:\bin\url-handler.exe" "%1"
 
 (where C:\bin\... is the path to the exe file)
 
