@@ -58,18 +58,18 @@ int main(int argc, char* argv[]) {
     int not_ssh = strncmp(url_p, "ssh://", 6);
     int not_rdp = strncmp(url_p, "rdp://", 6);
 
-    fprintf(stderr, "not_ssh [%d] not_rdp [%d]\n", not_ssh, not_rdp);
-
     if ( not_ssh != 0 && not_rdp != 0 ) {
 
-        fprintf(stderr, "%s: '%s' is not a valid ssh:// or rdp:// URL\n", my_name, url_p);
+        fprintf(stderr, "%s: '%s' is not a valid ssh:// or rdp:// URL\n",
+            my_name, url_p);
         return 2;
 
     }
 
     if ( strlen(url_p) < 7 ) {
         usage(my_name);
-        fprintf(stderr, "  (You must give a hostname. I only saw '%s')\n", url_p);
+        fprintf(stderr, "  (You must give a hostname. I only saw '%s')\n",
+            url_p);
         return 2;
     }
 
@@ -133,7 +133,7 @@ int main(int argc, char* argv[]) {
 
     } else {
 
-        fprintf(stderr, "You are not following the protocol... ***sigh***\n");
+        fprintf(stderr, "How did I get here with no protocol?\n");
 
     }
 
