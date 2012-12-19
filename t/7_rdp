@@ -1,1 +1,1 @@
-$TEST_BINARY rdp://hostname.net
+$TEST_BINARY rdp://localhost

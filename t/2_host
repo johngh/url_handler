@@ -1,1 +1,1 @@
-$TEST_BINARY ssh://hostname.net
+$TEST_BINARY ssh://localhost
