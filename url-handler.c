@@ -39,9 +39,10 @@ int main(int argc, char* argv[]) {
 
     strcpy(my_name, argv[0]);
 
-    // char *putty_cmd = "\"C:\\Program Files\\PuTTY\\putty.exe\"";
-    char *putty_cmd = "\"putty.exe\"";
-    char *rdp_cmd = "\"mstsc.exe\"";
+    // char *putty_cmd = "\"putty.exe\"";
+    // char *rdp_cmd = "\"mstsc.exe\"";
+    char *putty_cmd = "\"C:\\Program Files\\PuTTY\\putty.exe\"";
+    char *rdp_cmd = "\"C:\\Windows\\system32\\mstsc.exe\"";
 
     char cmd[2048];
 
@@ -56,20 +57,13 @@ int main(int argc, char* argv[]) {
 
     int not_ssh = strncmp(url_p, "ssh://", 6);
     int not_rdp = strncmp(url_p, "rdp://", 6);
-    int is_ssh, is_rdp;
 
-    if( not_ssh && not_rdp ) {
+    fprintf(stderr, "not_ssh [%d] not_rdp [%d]\n", not_ssh, not_rdp);
+
+    if ( not_ssh != 0 && not_rdp != 0 ) {
 
         fprintf(stderr, "%s: '%s' is not a valid ssh:// or rdp:// URL\n", my_name, url_p);
         return 2;
-
-    } else if ( not_rdp ) {
-
-        is_ssh = 1;
-
-    } else if ( not_ssh ) {
-
-        is_rdp = 1;
 
     }
 
@@ -116,7 +110,7 @@ int main(int argc, char* argv[]) {
         port = t1+1;
     }
 
-    if ( is_ssh ) {
+    if ( not_ssh == 0 ) {
 
         strcpy(cmd, putty_cmd);
         strncat(cmd, " -ssh ", 6);
@@ -132,7 +126,7 @@ int main(int argc, char* argv[]) {
             strncat(cmd, "@", 1);
         }
 
-    } else if ( is_rdp ) {
+    } else if ( not_rdp == 0 ) {
 
         strcpy(cmd, rdp_cmd);
         strncat(cmd, " /v ", 4);
