@@ -1,5 +1,7 @@
 all: binary test
 
+bin: binary
+
 binary:
 	gcc -o url-handler url-handler.c
 
