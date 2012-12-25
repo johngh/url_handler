@@ -18,15 +18,32 @@
  * paramname     =  *( ALPHA / DIGIT / "-" )
  * paramvalue    =  *( ALPHA / DIGIT / "-" )
  *
+ * Compile with:
+ * gcc -Wl,-subsystem,windows -o url-handler url-handler.c
+ * or:
+ * gcc -mwindows -o url-handler url-handler.c
  */
 
+#include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
-void usage (char *my_name) {
-    fprintf(stderr, "Usage: %s ssh://[LOGIN@]HOST[:PORT]\n", my_name);
+int show_usage(char *my_name) {
+    char usage[2048];
+    sprintf(usage, "Usage: %s ssh://[LOGIN@]HOST[:PORT]", my_name);
+    MessageBox(NULL, TEXT(usage), TEXT("Error"), MB_ICONERROR | MB_OK);
+    return 0;
 }
+
+/*
+int APIENTRY WinMain(HINSTANCE hInstance,
+                     HINSTANCE hPrevInstance,
+                     LPSTR     lpCmdLine,
+                     int       nCmdShow) {
+*/
+
 
 int main(int argc, char* argv[]) {
 
@@ -41,14 +58,16 @@ int main(int argc, char* argv[]) {
 
     // char *putty_cmd = "\"putty.exe\"";
     // char *rdp_cmd = "\"mstsc.exe\"";
-    char *putty_cmd = "\"C:\\Program Files\\PuTTY\\putty.exe\"";
-    char *rdp_cmd = "\"C:\\Windows\\system32\\mstsc.exe\"";
+    // char *putty_cmd = "\"C:\\Program Files\\PuTTY\\putty.exe\"";
+    // char *rdp_cmd = "\"C:\\Windows\\system32\\mstsc.exe\"";
+    char *putty_cmd = "C:\\Program Files\\PuTTY\\putty.exe";
+    char *rdp_cmd = "C:\\Windows\\system32\\mstsc.exe";
 
     char cmd[2048];
 
     if( argc != 2 ) {
 
-        usage(my_name);
+        show_usage(my_name);
         return 2;
 
     }
@@ -60,16 +79,20 @@ int main(int argc, char* argv[]) {
 
     if ( not_ssh != 0 && not_rdp != 0 ) {
 
-        fprintf(stderr, "%s: '%s' is not a valid ssh:// or rdp:// URL\n",
+        char error[2048];
+        sprintf(error, "%s: '%s' is not a valid ssh:// or rdp:// URL",
             my_name, url_p);
-        return 2;
+        MessageBox(NULL, TEXT(error), TEXT("Error"),
+            MB_ICONERROR | MB_OK);
+        return 1;
 
     }
 
     if ( strlen(url_p) < 7 ) {
-        usage(my_name);
-        fprintf(stderr, "  (You must give a hostname. I only saw '%s')\n",
-            url_p);
+        // show_usage(my_name);
+        char error[2048];
+        sprintf(error, "Hostname required. I only saw '%s'", url_p);
+        MessageBox(NULL, TEXT(error), TEXT("Error"), MB_ICONERROR | MB_OK);
         return 2;
     }
 
@@ -133,7 +156,9 @@ int main(int argc, char* argv[]) {
 
     } else {
 
-        fprintf(stderr, "How did I get here with no protocol?\n");
+        char huh[2048];
+        sprintf(huh, "How did I get here with no protocol?");
+        MessageBox(NULL, TEXT(huh), TEXT("Error"), MB_ICONERROR | MB_OK);
 
     }
 
@@ -141,10 +166,52 @@ int main(int argc, char* argv[]) {
         strncat(cmd, host, strlen(host) );
     }
 
-    fprintf(stderr, "Running: %s\n", cmd);
-    int exit_code = system(cmd);
+    char running[2048];
+    sprintf(running, "%s", cmd);
+    int msgboxID = MessageBox(NULL, TEXT(running), TEXT("Running"),
+        MB_ICONINFORMATION | MB_OKCANCEL | MB_DEFBUTTON2);
 
-    return exit_code;
+    if ( msgboxID == IDCANCEL ) {
+        return 0;
+    }
+
+    STARTUPINFO si;
+    PROCESS_INFORMATION pi;
+
+    ZeroMemory( &si, sizeof(si) );
+    si.cb = sizeof(si);
+    ZeroMemory( &pi, sizeof(pi) );
+
+    // Start the child process.
+    if( !CreateProcess( NULL,   // No module name (use command line)
+        cmd,            // Command line
+        NULL,           // Process handle not inheritable
+        NULL,           // Thread handle not inheritable
+        FALSE,          // Set handle inheritance to FALSE
+        0,              // No creation flags
+        NULL,           // Use parent's environment block
+        NULL,           // Use parent's starting directory
+        &si,            // Pointer to STARTUPINFO structure
+        &pi )           // Pointer to PROCESS_INFORMATION structure
+    )
+    {
+
+        int exit_code = GetLastError();
+
+        char failed[2048];
+        sprintf( failed, "Can't run '%s' (%s)", cmd, strerror(exit_code));
+
+        MessageBox(NULL, TEXT(failed), TEXT("Error"), MB_ICONERROR | MB_OK);
+
+        return exit_code;
+
+    }
+
+    // Wait until child process exits.
+    WaitForSingleObject( pi.hProcess, INFINITE );
+
+    // Close process and thread handles.
+    CloseHandle( pi.hProcess );
+    CloseHandle( pi.hThread );
 
 }
-
