@@ -1,6 +1,6 @@
 all: bin1 test
 
-bin: bin1 bin2
+bin: bin1
 
 bin1:
 	gcc -Wl,-subsystem,windows -o url-handler url-handler.c
