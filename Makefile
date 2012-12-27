@@ -1,12 +1,15 @@
 all: bin1 test
 
-bin: bin1
+bin: bin1 strip
 
 bin1:
 	gcc -Wl,-subsystem,windows -o url-handler url-handler.c
 
 bin2:
 	gcc -mwindows -o url-handler url-handler.c
+
+strip:
+	strip -s url-handler.exe
 
 test:
 	t/all

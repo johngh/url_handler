@@ -166,14 +166,14 @@ int main(int argc, char* argv[]) {
         strncat(cmd, host, strlen(host) );
     }
 
-    char running[2048];
-    sprintf(running, "%s", cmd);
-    int msgboxID = MessageBox(NULL, TEXT(running), TEXT("Running"),
-        MB_ICONINFORMATION | MB_OKCANCEL | MB_DEFBUTTON2);
+    // char running[2048];
+    // sprintf(running, "%s", cmd);
+    // int msgboxID = MessageBox(NULL, TEXT(running), TEXT("Running"),
+    //     MB_ICONINFORMATION | MB_OKCANCEL | MB_DEFBUTTON2);
 
-    if ( msgboxID == IDCANCEL ) {
-        return 0;
-    }
+    // if ( msgboxID == IDCANCEL ) {
+    //     return 0;
+    // }
 
     STARTUPINFO si;
     PROCESS_INFORMATION pi;
