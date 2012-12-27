@@ -60,7 +60,67 @@ int main(int argc, char* argv[]) {
     // char *rdp_cmd = "\"mstsc.exe\"";
     // char *putty_cmd = "\"C:\\Program Files\\PuTTY\\putty.exe\"";
     // char *rdp_cmd = "\"C:\\Windows\\system32\\mstsc.exe\"";
-    char *putty_cmd = "C:\\Program Files\\PuTTY\\putty.exe";
+    // char *putty_cmd = "C:\\Program Files\\PuTTY\\putty.exe";
+    char putty_cmd[256];
+    // strncpy(putty_cmd, "C:\\Program Files\\PuTTY\\putty.exe", 32);
+    //
+
+    HKEY hKey;
+
+    if(RegOpenKeyEx(HKEY_CLASSES_ROOT, "ssh", 0,
+        KEY_QUERY_VALUE, &hKey) != ERROR_SUCCESS) return 1;
+
+    char ent_name[256];
+    strncpy(ent_name, "PuTTY Path",11);
+
+    DWORD ent_length, ent_type;
+
+    if(RegQueryValueExA(hKey, ent_name, NULL, &ent_type, putty_cmd, &ent_length) == ERROR_SUCCESS){
+
+        if ( ! strlen(putty_cmd) ) {
+
+            char error[2048];
+            sprintf(error, "%s: PuTTY command read from [HKEY_CLASSES_ROOT\\ssh\\PuTTY Path] is empty.", my_name);
+            MessageBox(NULL, TEXT(error), TEXT("Error"), MB_ICONERROR | MB_OK);
+            return 1;
+
+        }
+
+    } else {
+
+        char error[2048];
+        sprintf(error, "%s: Can't read [HKEY_CLASSES_ROOT\\ssh\\PuTTY Path] from registry.", my_name);
+        MessageBox(NULL, TEXT(error), TEXT("Error"), MB_ICONERROR | MB_OK);
+        return 1;
+
+    }
+
+    if (ent_type != REG_SZ) {
+
+        char error[2048];
+        sprintf(error, "%s: I don't like your type...", my_name);
+        MessageBox(NULL, TEXT(error), TEXT("Error"), MB_ICONERROR | MB_OK);
+        return 1;
+
+    }
+
+    /*
+    // strncpy(ent_name, "Show Debug",11);
+    char show_debug[2048];
+    strcpy( show_debug, "\0");
+
+    if(RegQueryValueExA(hKey, ent_name, NULL, &ent_type, show_debug, &ent_length) == ERROR_SUCCESS){
+
+        char error[2048];
+        sprintf(error, "%s: Debug flag '%s' not found...", my_name, ent_name);
+        MessageBox(NULL, TEXT(error), TEXT("Error"), MB_ICONERROR | MB_OK);
+        return 1;
+
+    }
+    */
+
+    RegCloseKey(hKey);
+
     char *rdp_cmd = "C:\\Windows\\system32\\mstsc.exe";
 
     char cmd[2048];
@@ -166,14 +226,20 @@ int main(int argc, char* argv[]) {
         strncat(cmd, host, strlen(host) );
     }
 
-    // char running[2048];
-    // sprintf(running, "%s", cmd);
-    // int msgboxID = MessageBox(NULL, TEXT(running), TEXT("Running"),
-    //     MB_ICONINFORMATION | MB_OKCANCEL | MB_DEFBUTTON2);
+    /*
+    if ( show_debug == NULL ) {
 
-    // if ( msgboxID == IDCANCEL ) {
-    //     return 0;
-    // }
+        char running[2048];
+        sprintf(running, "%s", cmd);
+        int msgboxID = MessageBox(NULL, TEXT(running), TEXT("Running"),
+            MB_ICONINFORMATION | MB_OKCANCEL | MB_DEFBUTTON2);
+
+        if ( msgboxID == IDCANCEL ) {
+            return 0;
+        }
+
+    }
+    */
 
     STARTUPINFO si;
     PROCESS_INFORMATION pi;
