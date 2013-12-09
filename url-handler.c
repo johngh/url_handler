@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
         if ( ! strlen(putty_cmd) ) {
 
             char error[2048];
-            sprintf(error, "%s: PuTTY command read from [HKEY_CLASSES_ROOT\\ssh\\PuTTY Path] is empty.", my_name);
+            sprintf(error, "%s: PuTTY command read from [%s] is empty.", my_name, ent_name);
             MessageBox(NULL, TEXT(error), TEXT("Error"), MB_ICONERROR | MB_OK);
             return 1;
 
@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
     } else {
 
         char error[2048];
-        sprintf(error, "%s: Can't read [HKEY_CLASSES_ROOT\\ssh\\PuTTY Path] from registry.", my_name);
+        sprintf(error, "%s: Can't read [%s] from registry.", my_name, ent_name);
         MessageBox(NULL, TEXT(error), TEXT("Error"), MB_ICONERROR | MB_OK);
         return 1;
 
@@ -121,7 +121,8 @@ int main(int argc, char* argv[]) {
 
     RegCloseKey(hKey);
 
-    char *rdp_cmd = "C:\\Windows\\system32\\mstsc.exe";
+    // char *rdp_cmd = "C:\\Windows\\system32\\mstsc.exe";
+    char *rdp_cmd = "%SystemRoot%\\system32\\mstsc.exe";
 
     char cmd[2048];
 
