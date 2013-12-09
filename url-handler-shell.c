@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
 
     // char *putty_cmd = "\"putty.exe\"";
     // char *rdp_cmd = "\"mstsc.exe\"";
-    char *putty_cmd = "\"C:\\Program Files\\PuTTY\\putty.exe\"";
+    char *putty_cmd = "\"C:\\Program Files (x86)\\putty\\PUTTY.EXE\"";
     char *rdp_cmd = "\"C:\\Windows\\system32\\mstsc.exe\"";
 
     char cmd[2048];
