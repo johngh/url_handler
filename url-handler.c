@@ -56,22 +56,43 @@ int main(int argc, char* argv[]) {
 
     strcpy(my_name, argv[0]);
 
-    // char *putty_cmd = "\"putty.exe\"";
+    FILE * log_fh;
+
+    log_fh = fopen ("url-handler.log","w");
+
+    fprintf (log_fh, "my_name: '%s'\n", my_name);
+
+    //
     // char *rdp_cmd = "\"mstsc.exe\"";
-    // char *putty_cmd = "\"C:\\Program Files\\PuTTY\\putty.exe\"";
     // char *rdp_cmd = "\"C:\\Windows\\system32\\mstsc.exe\"";
+    //
+    // char *putty_cmd = "\"putty.exe\"";
+    // char *putty_cmd = "\"C:\\Program Files\\PuTTY\\putty.exe\"";
     // char *putty_cmd = "C:\\Program Files\\PuTTY\\putty.exe";
-    char putty_cmd[256];
     // strncpy(putty_cmd, "C:\\Program Files\\PuTTY\\putty.exe", 32);
     //
 
+    char putty_cmd[256];
+
     HKEY hKey;
 
-    if(RegOpenKeyEx(HKEY_CLASSES_ROOT, "ssh", 0,
-        KEY_QUERY_VALUE, &hKey) != ERROR_SUCCESS) return 1;
+    fprintf (log_fh, "Reading reg...\n");
+
+    if(RegOpenKeyEx(HKEY_CLASSES_ROOT, "ssh", 0, KEY_QUERY_VALUE, &hKey) != ERROR_SUCCESS) {
+
+        fprintf(log_fh, "ERROR: Can't read [HKEY_CLASSES_ROOT\\ssh]\n");
+        return 1;
+
+    } else {
+
+        fprintf (log_fh, "GOOD: I read [HKEY_CLASSES_ROOT\\ssh]\n");
+
+    }
 
     char ent_name[256];
     strncpy(ent_name, "PuTTY Path",11);
+
+    fprintf (log_fh, "Searching registry for '%s'\n", ent_name); 
 
     DWORD ent_length, ent_type;
 
@@ -80,11 +101,15 @@ int main(int argc, char* argv[]) {
         if ( ! strlen(putty_cmd) ) {
 
             char error[2048];
-            sprintf(error, "%s: PuTTY command read from [%s] is empty.", my_name, ent_name);
+            fprintf (log_fh, "%s: ERROR: PuTTY command read from [%s] is empty.", my_name, ent_name);
             MessageBox(NULL, TEXT(error), TEXT("Error"), MB_ICONERROR | MB_OK);
             return 1;
 
-        }
+        } else {
+
+            fprintf(log_fh, "Got putty_cmd: '%s'\n", putty_cmd); 
+
+	}
 
     } else {
 
@@ -121,7 +146,6 @@ int main(int argc, char* argv[]) {
 
     RegCloseKey(hKey);
 
-    // char *rdp_cmd = "C:\\Windows\\system32\\mstsc.exe";
     char *rdp_cmd = "%SystemRoot%\\system32\\mstsc.exe";
 
     char cmd[2048];
@@ -281,4 +305,7 @@ int main(int argc, char* argv[]) {
     CloseHandle( pi.hProcess );
     CloseHandle( pi.hThread );
 
+    fclose (log_fh);
+
 }
+
