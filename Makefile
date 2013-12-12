@@ -5,6 +5,9 @@ bin: bin1 strip
 bin1:
 	gcc -Wl,-subsystem,windows -o url-handler url-handler.c
 
+wrapper:
+	gcc -Wl,-subsystem,windows -o perl-wrapper perl_wrapper.c
+
 bin2:
 	gcc -mwindows -o url-handler url-handler.c
 
