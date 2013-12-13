@@ -1,8 +1,8 @@
-all: bin1 test
+all: bin
 
-bin: bin1 strip
+bin: url_handler strip
 
-bin1:
+url_handler:
 	gcc -Wl,-subsystem,windows -o url-handler url-handler.c
 
 wrapper:
