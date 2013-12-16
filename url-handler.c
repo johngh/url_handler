@@ -57,11 +57,11 @@ int main(int argc, char* argv[]) {
 
     strcpy(my_name, argv[0]);
 
-    FILE * log_fh;
+    // FILE * log_fh;
 
-    log_fh = fopen ("url-handler.log","w");
+    // log_fh = fopen ("url-handler.log","w");
 
-    fprintf (log_fh, "my_name: '%s'\n", my_name);
+    // fprintf (log_fh, "my_name: '%s'\n", my_name);
 
     //
     // char *rdp_cmd = "\"mstsc.exe\"";
@@ -265,7 +265,7 @@ int main(int argc, char* argv[]) {
     CloseHandle( pi.hProcess );
     CloseHandle( pi.hThread );
 
-    fclose (log_fh);
+    // fclose (log_fh);
 
 }
 
