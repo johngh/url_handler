@@ -53,6 +53,7 @@ int main(int argc, char* argv[]) {
     char *c_params = NULL;
     char *url_p, *t1, *t2; // temp
     char my_name[256];
+    DWORD dword_size = 1025;
 
     strcpy(my_name, argv[0]);
 
@@ -64,52 +65,36 @@ int main(int argc, char* argv[]) {
 
     //
     // char *rdp_cmd = "\"mstsc.exe\"";
+    // char *rdp_cmd = "%SystemRoot%\\system32\\mstsc.exe";
     // char *rdp_cmd = "\"C:\\Windows\\system32\\mstsc.exe\"";
     //
     // char *putty_cmd = "\"putty.exe\"";
-    // char *putty_cmd = "\"C:\\Program Files\\PuTTY\\putty.exe\"";
     // char *putty_cmd = "C:\\Program Files\\PuTTY\\putty.exe";
+    // char *putty_cmd = "\"C:\\Program Files\\PuTTY\\putty.exe\"";
     // strncpy(putty_cmd, "C:\\Program Files\\PuTTY\\putty.exe", 32);
     //
 
     char putty_cmd[256];
-
-    HKEY hKey;
-
-    fprintf (log_fh, "Reading reg...\n");
-
-    if(RegOpenKeyEx(HKEY_CLASSES_ROOT, "ssh", 0, KEY_QUERY_VALUE, &hKey) != ERROR_SUCCESS) {
-
-        fprintf(log_fh, "ERROR: Can't read [HKEY_CLASSES_ROOT\\ssh]\n");
-        return 1;
-
-    } else {
-
-        fprintf (log_fh, "GOOD: I read [HKEY_CLASSES_ROOT\\ssh]\n");
-
-    }
-
     char ent_name[256];
-    strncpy(ent_name, "PuTTY Path",11);
+    strcpy(ent_name, "HKEY_CLASSES_ROOT\\ssh\\PuTTY Path");
 
-    fprintf (log_fh, "Searching registry for '%s'\n", ent_name); 
-
-    DWORD ent_length, ent_type;
-
-    if(RegQueryValueExA(hKey, ent_name, NULL, &ent_type, putty_cmd, &ent_length) == ERROR_SUCCESS){
+    if(
+        RegGetValue(HKEY_CLASSES_ROOT, "ssh", "PuTTY Path", RRF_RT_ANY, NULL, (PVOID)&putty_cmd, &dword_size)
+	== ERROR_SUCCESS
+    ) {
 
         if ( ! strlen(putty_cmd) ) {
 
             char error[2048];
-            fprintf (log_fh, "%s: ERROR: PuTTY command read from [%s] is empty.", my_name, ent_name);
+            sprintf (error, "%s: ERROR: PuTTY command read from [%s] is empty.", my_name, ent_name);
             MessageBox(NULL, TEXT(error), TEXT("Error"), MB_ICONERROR | MB_OK);
             return 1;
 
         } else {
 
-            fprintf(log_fh, "Got putty_cmd: '%s'\n", putty_cmd); 
+            // fprintf(log_fh, "Read putty_cmd: '%s'\n", putty_cmd); 
 
-	}
+        }
 
     } else {
 
@@ -120,33 +105,8 @@ int main(int argc, char* argv[]) {
 
     }
 
-    if (ent_type != REG_SZ) {
-
-        char error[2048];
-        sprintf(error, "%s: I don't like your type...", my_name);
-        MessageBox(NULL, TEXT(error), TEXT("Error"), MB_ICONERROR | MB_OK);
-        return 1;
-
-    }
-
-    /*
-    // strncpy(ent_name, "Show Debug",11);
-    char show_debug[2048];
-    strcpy( show_debug, "\0");
-
-    if(RegQueryValueExA(hKey, ent_name, NULL, &ent_type, show_debug, &ent_length) == ERROR_SUCCESS){
-
-        char error[2048];
-        sprintf(error, "%s: Debug flag '%s' not found...", my_name, ent_name);
-        MessageBox(NULL, TEXT(error), TEXT("Error"), MB_ICONERROR | MB_OK);
-        return 1;
-
-    }
-    */
-
-    RegCloseKey(hKey);
-
-    char *rdp_cmd = "%SystemRoot%\\system32\\mstsc.exe";
+    // char *rdp_cmd = "%SystemRoot%\\system32\\mstsc.exe";
+    char *rdp_cmd = "C:\\Windows\\system32\\mstsc.exe";
 
     char cmd[2048];
 
